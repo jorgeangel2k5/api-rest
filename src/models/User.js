@@ -60,5 +60,8 @@ UserSchema.methods.generateVerificationCode = function () {
 };
 
 //método para comparar las contraseñas
+UserSchema.methods.comparePassword = function (userPassword) {
+  return bcrypt.compareSync(userPassword, this.password);
+};
 
 export default model("User", UserSchema);
