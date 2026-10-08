@@ -7,10 +7,12 @@ export const generateToken = (userId) => {
   });
 };
 
+//{userId: 2dfsfsefwse3rwefw}
+
 //función verificar token
 export const verifyToken = (token) => {
   try {
-    return jwt.verify(token, process.env.JWT_EXPIRES);
+    return jwt.verify(token, process.env.JWT_SECRET);
   } catch (error) {
     throw new Error("Token inválido o expirado");
   }

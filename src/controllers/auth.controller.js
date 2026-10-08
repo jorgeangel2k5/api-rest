@@ -74,13 +74,26 @@ const login = async (req, res) => {
     //generar el token de verificación
     const token = generateToken(user._id);
     //Guardar el token en las cookies
-    //HttpOnly
+    /*
+
+  httpOnly: true: impide que JavaScript del navegador lea la cookie. Ayuda a reducir el riesgo de robo mediante ataques XSS.
+secure: process.env.NODE_ENV === "production": la cookie solo se envía por HTTPS cuando la aplicación está en producción. En desarrollo puede enviarse por HTTP.
+sameSite: "lax": limita el envío de la cookie en solicitudes iniciadas desde otros sitios, lo que ayuda a mitigar ataques CSRF. Aun así, suele enviarse en navegaciones normales hacia el sitio.
+maxAge: 60 * 60 * 1000: establece la duración en milisegundos: 3.600.000 ms, es decir, 1 hora.
+    */
+    const cookieOptions = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 60 * 60 * 1000, //1hr
+    };
+
+    res.cookie("token", token, cookieOptions);
 
     //Iniciar sesión
     return res.status(200).json({
       ok: true,
       message: "Login exitoso!!",
-      token,
     });
   } catch (error) {
     return res.status(500).json({
