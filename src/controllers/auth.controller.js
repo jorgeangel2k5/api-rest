@@ -157,4 +157,48 @@ const verifyEmail = async (req, res) => {
   }
 };
 
-export { getUsers, register, login, verifyEmail };
+//Cerrar sesión
+const logOut = (req, res) => {
+  const token = req.cookies?.token;
+  if (!token) {
+    return res.status(400).json({
+      ok: false,
+      message: "La sesión no fue iniciada",
+    });
+  }
+
+  //limpiar las cookies
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "lax",
+  });
+
+  return res.status(200).json({
+    ok: true,
+    message: "Sesión cerrada con éxito!",
+  });
+};
+//Ver perfil del usuario
+const getProfile = (req, res) => {
+  try {
+    const { username, email, role, emailVerifed } = req.user;
+
+    res.status(200).json({
+      ok: true,
+      perfil: {
+        username,
+        email,
+        role,
+        emailVerifed,
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({
+      ok: false,
+      error: error.message,
+    });
+  }
+};
+
+export { getUsers, register, login, verifyEmail, logOut, getProfile };

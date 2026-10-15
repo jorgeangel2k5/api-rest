@@ -12,7 +12,7 @@ app.use(cookieParser());
 
 //Rutas
 app.use("/api/auth", authRoutes);
-
+// app.use("/category",)
 await dbConnect();
 
 app.listen(PORT, () => console.log(`Server online en puerto: ${PORT}`));

@@ -24,5 +24,68 @@ export const registerValidation = () => [
         throw new Error("El usuario ya existe");
       }
     }),
+  //validar email
+  check("email")
+    .isEmail()
+    .withMessage("Ingresar un email válido")
+    .custom(async (value) => {
+      const user = await User.findOne({ email: value });
+      if (user) {
+        throw new Error("El email ya está registrado");
+      }
+    })
+    .normalizeEmail(),
+  //validar password
+  // check("password")
+  //   .isLength({ min: 6 })
+  //   .withMessage("La contraseña debe tener como mínimo 6 caracteres")
+  //   .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
+  //   .withMessage("La contraseña debe tener mayúsculas, minúsculas y números"),
+  // handleValidationErrors,
+];
+
+//Validar Login
+export const loginValidation = () => [
+  check("email")
+    .trim()
+    .isEmail()
+    .withMessage("Por favor, ingrese un email válido")
+    .normalizeEmail(),
+  check("password").notEmpty().withMessage("La contraseña es requerida"),
+  // handleValidationErrors,
+];
+
+export const validationPassword = () => [
+  check("password")
+    .isLength({ min: 6 })
+    .withMessage("La contraseña debe tener como mínimo 6 caracteres")
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
+    .withMessage("La contraseña debe tener mayúsculas, minúsculas y números"),
+  // handleValidationErrors,
+];
+
+//validación de código email
+export const verifyEmailValidation = () => [
+  check("code")
+    .notEmpty()
+    .withMessage("El código de verificación es necesario")
+    .trim()
+    .isLength({ min: 6, max: 6 })
+    .withMessage("El código debe tener 6 dígitos")
+    .isNumeric()
+    .withMessage("El código debe ser un número"),
+  check("email")
+    .notEmpty()
+    .withMessage("El correo es requerido")
+    .trim()
+    .isEmail()
+    .withMessage("Ingrese un email válido")
+    .custom(async (value) => {
+      const user = await User.findOne({ email: value });
+      if (user.emailVerifed) {
+        throw new Error("El email ya está verificado");
+      }
+    })
+    .normalizeEmail(),
   handleValidationErrors,
 ];
