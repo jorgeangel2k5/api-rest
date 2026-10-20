@@ -51,12 +51,14 @@ export const loginValidation = () => [
     .isEmail()
     .withMessage("Por favor, ingrese un email válido")
     .normalizeEmail(),
-  check("password").notEmpty().withMessage("La contraseña es requerida"),
+
   // handleValidationErrors,
 ];
 
 export const validationPassword = () => [
   check("password")
+    .notEmpty()
+    .withMessage("La contraseña es requerida")
     .isLength({ min: 6 })
     .withMessage("La contraseña debe tener como mínimo 6 caracteres")
     .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)

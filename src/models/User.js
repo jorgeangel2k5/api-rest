@@ -54,6 +54,7 @@ UserSchema.pre("save", async function () {
 UserSchema.methods.generateVerificationCode = function () {
   //código de 6 dígitos
   const code = Math.floor(100000 + Math.random() * 900000).toString();
+  this.emailVerifed = false;
   this.verificationCode = code;
   this.verificationCodeExpires = Date.now() + 15 * 60 * 1000; //15 min
   return code;

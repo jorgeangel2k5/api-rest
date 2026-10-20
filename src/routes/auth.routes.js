@@ -14,6 +14,8 @@ import {
   login,
   logOut,
   register,
+  resendCodeVerificationEmail,
+  updatePassword,
   verifyEmail,
 } from "../controllers/auth.controller.js";
 
@@ -41,4 +43,15 @@ router.get("/", authenticate, getUsers);
 router.post("/logout", authenticate, logOut);
 router.get("/profile", authenticate, getProfile);
 
+//Actualizar contraseña
+router.put(
+  "/password",
+  loginValidation(),
+  validationPassword(),
+  handleValidationErrors,
+  updatePassword,
+);
+
+// Reenviar código de verificación
+router.post("/resend", loginValidation(), resendCodeVerificationEmail);
 export default router;

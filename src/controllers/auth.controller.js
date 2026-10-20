@@ -201,4 +201,85 @@ const getProfile = (req, res) => {
   }
 };
 
-export { getUsers, register, login, verifyEmail, logOut, getProfile };
+const updatePassword = async (req, res) => {
+  const { email, password } = req.body;
+
+  //si el email existe en la BD
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    return res.status(400).json({
+      ok: false,
+      message: "No existe el usuario",
+    });
+  }
+
+  if (!user.emailVerifed) {
+    return res.status(400).json({
+      ok: false,
+      message: "El email no está verificado",
+    });
+  }
+
+  //Enviar un mail con las instrucciones
+
+  user.password = password;
+  await user.save();
+
+  return res.status(200).json({
+    ok: true,
+    message: "Contraseña actualizada",
+    password: user.password,
+  });
+};
+
+const resendCodeVerificationEmail = async (req, res) => {
+  const { email } = req.body;
+
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    return res.status(404).json({
+      ok: false,
+      message: "El correo electrónico no corresponde",
+    });
+  }
+
+  if (user.emailVerifed) {
+    return res.status(400).json({
+      ok: false,
+      message: "El email ya está verificado",
+    });
+  }
+
+  const verificationCode = user.generateVerificationCode();
+  // console.log(verificationCode);
+
+  //actualizar el user en la BD
+  await user.save();
+
+  try {
+    await sendVerificationEmail(user.email, user.username, verificationCode);
+    return res.status(200).json({
+      ok: true,
+      message: "se envió un nuevo código de verificación",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      ok: false,
+      message: "Error al enviar el email",
+      error,
+    });
+  }
+};
+
+export {
+  getUsers,
+  register,
+  login,
+  verifyEmail,
+  logOut,
+  getProfile,
+  updatePassword,
+  resendCodeVerificationEmail,
+};
