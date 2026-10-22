@@ -53,14 +53,14 @@ const updateCategory = async (req, res) => {
   const { id } = req.params;
   const nombre = req.body.nombre.toUpperCase();
 
-  const existeCategoria = await Categoria.findById(id);
+  // const existeCategoria = await Categoria.findById(id);
 
-  if (!existeCategoria) {
-    return res.status(400).json({
-      ok: false,
-      message: `El id ${id} No existe`,
-    });
-  }
+  // if (!existeCategoria) {
+  //   return res.status(400).json({
+  //     ok: false,
+  //     message: `El id ${id} No existe`,
+  //   });
+  // }
 
   const validarNombre = await Categoria.findOne({ nombre });
 
@@ -95,5 +95,38 @@ const updateCategory = async (req, res) => {
 };
 
 //delete
+const deleteCategory = async (req, res) => {
+  const { id } = req.params;
 
-export { getCategories, addCategory, updateCategory };
+  //id existe en la BD
+  // const existeCategoria = await Categoria.findById(id);
+
+  // if (!existeCategoria) {
+  //   return res.status(400).json({
+  //     ok: false,
+  //     message: `El id ${id} No existe`,
+  //   });
+  // }
+
+  //validar si la categoría está activa
+  if (!existeCategoria.estado) {
+    return res.status(400).json({
+      ok: false,
+      message: `La categoria ${existeCategoria.nombre} no está activa`,
+    });
+  }
+
+  const categoriaBorrada = await Categoria.findByIdAndUpdate(
+    id,
+    { estado: false },
+    { returnDocument: "after" },
+  );
+
+  return res.status(200).json({
+    ok: true,
+    message: "Categoría eliminada",
+    categoriaBorrada,
+  });
+};
+
+export { getCategories, addCategory, updateCategory, deleteCategory };
