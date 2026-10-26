@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 //función generar el token
 export const generateToken = (userId) => {
   return jwt.sign({ userId }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES,
+    expiresIn: process.env.JWT_EXPIRES || "1h",
   });
 };
 
